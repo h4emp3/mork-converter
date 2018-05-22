@@ -18,6 +18,9 @@ morkyacc.py -- PLY-based parser for Mork database files.
 # You should have received a copy of the GNU General Public License
 # along with mork-converter.  If not, see <http://www.gnu.org/licenses/>.
 
+# flake8: noqa
+# pylint: disable=unused-import,invalid-name,bad-whitespace,missing-docstring
+
 import re
 import warnings
 import os
@@ -88,7 +91,7 @@ def p_group(p):
     '''
     m = _groupId.match(p[1])
     if m is None:
-        raise ValueError('no ID found in group token: %s' % p[1])
+        raise ValueError('no ID found in group token: %s' % (p[1],))
 
     commit = p[3].find('~') == -1
 
@@ -314,9 +317,9 @@ def p_object_id_refscope(p):
 
 def p_error(tok):
     if tok is None:
-        print 'Syntax error at end of input'
+        print('Syntax error at end of input')
     else:
-        print 'Syntax error at token', tok
+        print('Syntax error at token', tok)
         # Try to continue
         yacc.errok()
 
@@ -327,7 +330,7 @@ def parse(data):
 
 def parse_file(f):
     filename = None
-    if isinstance(f, basestring):
+    if isinstance(f, str):
         filename = f
         # Read a cached parse tree if possible
         tree = _get_parse_tree(filename)
@@ -341,7 +344,7 @@ def parse_file(f):
         # Cache the parse tree for later use
         tree_name = filename + '.parse-tree'
         try:
-            pickle.dump(tree, open(tree_name, 'w'), pickle.HIGHEST_PROTOCOL)
+            pickle.dump(tree, open(tree_name, 'wb'), pickle.HIGHEST_PROTOCOL)
         except IOError:
             pass
 

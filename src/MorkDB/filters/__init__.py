@@ -14,6 +14,9 @@
 # You should have received a copy of the GNU General Public License
 # along with mork-converter.  If not, see <http://www.gnu.org/licenses/>.
 
+# flake8: noqa
+# pylint: disable=invalid-name,missing-docstring,global-statement
+
 import os
 import sys
 import re
@@ -50,7 +53,7 @@ def enumerate_filters():
     if _filters is None:
         filters = set()
         for m in _find_modules():
-            for (name, obj) in vars(m).items():
+            for _, obj in vars(m).items():
                 if hasattr(obj, 'mork_filter_order') and \
                    obj.mork_filter_order >= 0:
                     filters.add(obj)

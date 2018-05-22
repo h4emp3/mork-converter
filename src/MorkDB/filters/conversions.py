@@ -14,7 +14,11 @@
 # You should have received a copy of the GNU General Public License
 # along with mork-converter.  If not, see <http://www.gnu.org/licenses/>.
 
-import optparse
+# flake8: noqa
+# pylint: disable=invalid-name,bad-whitespace,unused-argument,bad-continuation
+# pylint: disable=redefined-outer-name,unused-variable,missing-docstring
+
+import optparse  # pylint: disable=deprecated-module
 import warnings
 import sys
 
@@ -205,14 +209,15 @@ def _print_conversions(option, opt_str, value, parser):
 
     name_len = max(len(name) for (name, converter) in converters)
     for (name, converter) in converters:
-        print '%-*s  %s' % (name_len, name, converter.description)
+        print('%-*s  %s' % (name_len, name, converter.description))
 
     sys.exit()
 
 def _convert_opt_callback(option, opt_str, value, parser):
-    (row_ns, column, conversion) = value
+    row_ns, column, conversion = value
     if conversion not in _converters:
-        raise optparse.OptionValueError('unknown conversion: %r' % conversion)
+        raise optparse.OptionValueError('unknown conversion: %r' %
+                                        (conversion,))
     parser.values.convert[(row_ns, column)] = conversion
 
 class FieldConverter(Filter):
@@ -275,7 +280,7 @@ class FieldConverter(Filter):
                     field.set_value(row_namespace, col, value)
                     try:
                         row[col] = converter.convert(field)
-                    except converters.ConversionError, e:
+                    except converters.ConversionError as e:
                         warnings.warn(
                             'unconvertible value, consider using '
                             '--convert option\n'

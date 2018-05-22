@@ -20,6 +20,10 @@
 # You should have received a copy of the GNU General Public License
 # along with mork-converter.  If not, see <http://www.gnu.org/licenses/>.
 
+# flake8: noqa
+# pylint: disable=bad-continuation,invalid-name,too-many-arguments
+# pylint: disable=bad-whitespace,missing-docstring
+
 import re
 import warnings
 import sys
@@ -74,19 +78,19 @@ class XmlOutput(Filter):
         self._output(db, f)
 
     def _output(self, db, f):
-        print >> f, '<?xml version="1.0"?>'
-        print >> f, '<morkxml>'
+        f.write('<?xml version="1.0"?>\n')
+        f.write('<morkxml>\n')
 
         for (namespace, oid, table) in db.tables.items():
             meta = db.meta_tables.get((namespace, oid))
             self._write_table(f, namespace, oid, table, meta)
 
-        print >> f, '</morkxml>'
+        f.write('</morkxml>\n')
 
     def _write_table(self, f, namespace, oid, table, meta=None, indent=1):
         indent_str = self._indent_str * indent
-        print >> f, '%s<table namespace=%s id=%s>' % (indent_str,
-            self._format_attribute(namespace), self._format_attribute(oid))
+        f.write('%s<table namespace=%s id=%s>\n' % (indent_str,
+            self._format_attribute(namespace), self._format_attribute(oid)))
 
         for (row_namespace, row_id, row) in table:
             self._write_row(f, row_namespace, row_id, row, indent + 1)
@@ -94,11 +98,11 @@ class XmlOutput(Filter):
         if meta is not None:
             self._write_meta_table(f, meta, indent + 1)
 
-        print >> f, '%s</table>' % indent_str
+        f.write('%s</table>\n' % (indent_str,))
 
     def _write_meta_table(self, f, meta, indent):
         indent_str = self._indent_str * indent
-        print >> f, '%s<metatable>' % indent_str
+        f.write('%s<metatable>\n' % (indent_str,))
 
         for (column, value) in meta.cells.items():
             self._write_cell(f, column, value, indent + 1)
@@ -106,22 +110,22 @@ class XmlOutput(Filter):
         for (namespace, oid, row) in meta.rows:
             self._write_row(f, namespace, oid, row, indent + 1)
 
-        print >> f, '%s</metatable>' % indent_str
+        f.write('%s</metatable>\n' % (indent_str,))
 
     def _write_row(self, f, namespace, oid, row, indent):
         indent_str = self._indent_str * indent
-        print >> f, '%s<row namespace=%s id=%s>' % (indent_str,
-            self._format_attribute(namespace), self._format_attribute(oid))
+        f.write('%s<row namespace=%s id=%s>\n' % (indent_str,
+            self._format_attribute(namespace), self._format_attribute(oid)))
 
         for (column, value) in row.items():
             self._write_cell(f, column, value, indent + 1)
 
-        print >> f, '%s</row>' % indent_str
+        f.write('%s</row>\n' % (indent_str,))
 
     def _write_cell(self, f, column, value, indent):
         indent_str = self._indent_str * indent
-        print >> f, '%s<cell column=%s>%s</cell>' % (indent_str,
-            self._format_attribute(column), self._format_element_text(value))
+        f.write('%s<cell column=%s>%s</cell>\n' % (indent_str,
+            self._format_attribute(column), self._format_element_text(value)))
 
     # Regex for stuff that's not in the 'Char' production of the XML grammar
     _non_char = (
@@ -158,13 +162,14 @@ class XmlOutput(Filter):
                           'well-formed XML document')
             # Use a CharRef even though it's not well-formed, since CharRefs
             # don't get around the character limitations in XML.
-            new = '&#x%x;' % ord(old)
+            new = '&#x%x;' % (ord(old),)
 
         return new
 
     def _format_attribute(self, value):
         # This corresponds to 'AttValue' in the spec.
-        return '"%s"' % self._non_att_value_matcher.sub(self._replacer, value)
+        return '"%s"' % (self._non_att_value_matcher.sub(self._replacer,
+                                                         value),)
 
     def _format_element_text(self, value):
         # This correspond to 'CharData' in the spec.

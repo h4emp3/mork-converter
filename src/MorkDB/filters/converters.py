@@ -14,6 +14,10 @@
 # You should have received a copy of the GNU General Public License
 # along with mork-converter.  If not, see <http://www.gnu.org/licenses/>.
 
+# flake8: noqa
+# pylint: disable=invalid-name,missing-docstring,no-else-return,bad-whitespace
+# pylint: disable=no-self-use,unused-variable
+
 import warnings
 import time
 import re
@@ -48,7 +52,7 @@ class FieldConverter(object):
     generic = False
 
     def convert(self, field):
-        raise NotImplementedError();
+        raise NotImplementedError()
 
 class NullConverter(FieldConverter):
     description = 'No-op converter. Leaves the value unchanged.'
@@ -64,12 +68,12 @@ class Int(FieldConverter):
         if field.opts.no_base:
             return field.value
 
-        return unicode(self._to_int(field.value))
+        return str(self._to_int(field.value))
 
     def _to_int(self, value):
         try:
             return int(value, self.base)
-        except ValueError, e:
+        except ValueError as e:
             raise ConversionError(str(e))
 
 class IntHex(Int):
@@ -93,7 +97,7 @@ class SignedInt32(Int):
         if ival > 0x7fffffff:
             ival -= 0x100000000
 
-        return unicode(ival)
+        return str(ival)
 
 # From TB3.0.5:mailnews/imap/src/nsImapMailFolder.cpp, with constants in
 # mailnews/imap/src/nsImapCore.h
@@ -109,7 +113,7 @@ class HierDelim(Int):
         ival = self._to_int(field.value)
         try:
             cval = chr(ival)
-        except ValueError, e:
+        except ValueError as e:
             raise ConversionError(str(e))
         if cval == '^':
             return 'kOnlineHierarchySeparatorUnknown'
@@ -178,7 +182,7 @@ class MsgFlags(Flags):
         ival -= priorities
         priorities >>= 13
         if priorities >= len(self._priority_labels):
-            raise ConversionError('invalid priority (%d)' % priorities)
+            raise ConversionError('invalid priority (%d)' % (priorities,))
         # Labels = 0xE000000
         labels = ival & 0xE000000
         ival -= labels
@@ -189,9 +193,10 @@ class MsgFlags(Flags):
         if priorities:
             # Note that there's actually just one priority, but the name
             # 'Priorities' is used in the flag definitions.
-            flags.append('Priorities:%s' % self._priority_labels[priorities])
+            flags.append('Priorities:%s' %
+                         (self._priority_labels[priorities],))
         if labels:
-            flags.append('Labels:0x%X' % labels)
+            flags.append('Labels:0x%X' % (labels,))
 
         return ' '.join(flags)
 
@@ -222,7 +227,7 @@ class ImapFlags(Flags):
         flags = self._get_flags(ival, field)
 
         if labels:
-            flags.append('Labels:0x%X' % labels)
+            flags.append('Labels:0x%X' % (labels,))
 
         return ' '.join(flags)
 
@@ -425,7 +430,7 @@ class Seconds(Time):
             seconds = as_int / self.divisor
             return time.localtime(seconds)
         # This should catch errors from int() and localtime()
-        except ValueError, e:
+        except ValueError as e:
             raise ConversionError(str(e))
 
 
@@ -436,7 +441,7 @@ class FormattedTime(Time):
     def _to_time(self, field):
         try:
             return time.strptime(field.value, self.parse_format)
-        except ValueError, e:
+        except ValueError as e:
             raise ConversionError(str(e))
 
 class SecondsHex(Seconds):
@@ -464,7 +469,7 @@ class SecondsGuessBase(Seconds):
             seconds = int(field.value, base)
             return time.localtime(seconds)
         # This should catch errors from int() and localtime()
-        except ValueError, e:
+        except ValueError as e:
             raise ConversionError(str(e))
 
     def _search_for_base(self, field):
@@ -476,7 +481,7 @@ class SecondsGuessBase(Seconds):
         else:
             try:
                 as_dec = int(field.value)
-            except ValueError, e:
+            except ValueError as e:
                 raise ConversionError(str(e))
 
             warnings.warn("uncertain number base; consider using --convert "

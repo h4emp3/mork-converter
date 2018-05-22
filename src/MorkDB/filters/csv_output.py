@@ -16,6 +16,10 @@
 # You should have received a copy of the GNU General Public License
 # along with mork-converter.  If not, see <http://www.gnu.org/licenses/>.
 
+# flake8: noqa
+# pylint: disable=bad-continuation,invalid-name,missing-docstring
+# pylint: disable=no-else-return,arguments-differ
+
 import re
 import os
 import sys
@@ -90,7 +94,7 @@ class _TableWriter(object):
             # prepending the row namespace and id.
             values = [row.get(header, '') for header in headers]
             values = [row_namespace, rowid] + values
-            print >> f, self._format_csv_row(values)
+            f.write(self._format_csv_row(values) + '\n')
 
     def write_table(self, table, namespace, oid):
         import MorkDB.morkdb as morkdb
@@ -98,13 +102,13 @@ class _TableWriter(object):
         f = self._new_table(namespace, oid)
 
         # skip over empty tables:
-        if len(table) == 0:
+        if not table:
             return
         # construct and output the table header line by fetching and sorting
         # the headers, then prepending headers for namespace and id:
         headers = list(table.column_names())
         headers.sort()
-        print >> f, self._format_csv_row(['namespace', 'id'] + headers)
+        f.write(self._format_csv_row(['namespace', 'id'] + headers) + '\n')
 
         self._write_rows(f, table, headers)
 
@@ -125,7 +129,7 @@ class _TableWriter(object):
 
         # extra_headers is for the rows, extra_values for the cells row.
         # These have to kept even for the number of columns to be equal.
-        if len(metatable.rows) == 0:
+        if not metatable.rows:
             extra_headers = []
             extra_values = []
         else:
@@ -135,11 +139,11 @@ class _TableWriter(object):
         # Header line
         headers = list(metatable.column_names())
         headers.sort()
-        print >> f, self._format_csv_row(extra_headers + headers)
+        f.write(self._format_csv_row(extra_headers + headers) + '\n')
 
         # Output cells
         values = [metatable.cells.get(header, '') for header in headers]
-        print >> f, self._format_csv_row(extra_values + values)
+        f.write(self._format_csv_row(extra_values + values) + '\n')
 
         # Output rows
         self._write_rows(f, metatable.rows, headers)
@@ -169,7 +173,7 @@ class _TableWriter(object):
         match = self._needs_quotes.search(value)
         if match:
             # Add surrounding double-quotes and double internal double-quotes.
-            value = '"%s"' % value.replace('"', '""')
+            value = '"%s"' % (value.replace('"', '""'),)
 
         return value
 
@@ -184,9 +188,9 @@ class _SingleFileWriter(_TableWriter):
         self.fp = self.open(outname)
 
     def _new_table(self, namespace, oid, prefix=''):
-        print >> self.fp, '-' * 70
-        print >> self.fp, '%sTABLE %s :: %s' % (prefix, namespace, oid)
-        print >> self.fp, '-' * 70
+        self.fp.write('-' * 70 + '\n')
+        self.fp.write('%sTABLE %s :: %s\n' % (prefix, namespace, oid))
+        self.fp.write('-' * 70 + '\n')
         return self.fp
 
     def _new_metatable(self, namespace, oid):

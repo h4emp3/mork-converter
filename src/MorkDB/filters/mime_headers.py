@@ -14,6 +14,10 @@
 # You should have received a copy of the GNU General Public License
 # along with mork-converter.  If not, see <http://www.gnu.org/licenses/>.
 
+# flake8: noqa
+# pylint: disable=bad-continuation,unused-variable,bad-whitespace,no-self-use
+# pylint: disable=invalid-name,missing-docstring
+
 import re
 import warnings
 import quopri
@@ -63,7 +67,7 @@ class DecodeMimeHeaders(Filter):
         elif encoding == 'b':
             encoded = encoded.decode('base64')
         else:
-            raise ValueError('Unknown MIME header encoding: %r' % encoding)
+            raise ValueError('Unknown MIME header encoding: %r' % (encoding,))
 
         return encoded.decode(charset)
 
@@ -88,7 +92,7 @@ class DecodeMimeHeaders(Filter):
             return self._decode_string(charset, encoding.lower(), encoded)
         # There doesn't seem to be a more specific exception that can be used
         # here.
-        except Exception, e:
+        except BaseException as e:
             val = m.group()
             warnings.warn('mime_headers decoding failed for %r (%s)' % (val, e))
             return val

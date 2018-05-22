@@ -14,6 +14,9 @@
 # You should have received a copy of the GNU General Public License
 # along with mork-converter.  If not, see <http://www.gnu.org/licenses/>.
 
+# flake8: noqa
+# pylint: disable=missing-docstring,invalid-name
+
 class Filter(object):
     def add_options(self, parser):
         '''

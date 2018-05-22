@@ -16,6 +16,10 @@
 # You should have received a copy of the GNU General Public License
 # along with mork-converter.  If not, see <http://www.gnu.org/licenses/>.
 
+# flake8: noqa
+# pylint: disable=bad-continuation,unused-variable,invalid-name
+# pylint: disable=missing-docstring
+
 from filterbase import Filter
 
 class StripEmptyCells(Filter):

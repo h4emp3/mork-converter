@@ -19,6 +19,10 @@ file.
 # You should have received a copy of the GNU General Public License
 # along with mork-converter.  If not, see <http://www.gnu.org/licenses/>.
 
+# flake8: noqa
+# pylint: disable=missing-docstring,invalid-name,no-else-return
+# pylint: disable=bad-continuation
+
 import re
 
 class MorkAst(object):
@@ -36,7 +40,7 @@ class MorkAst(object):
             text = MorkAst.format_list(items)
             return '%s:\n%s' % (name, MorkAst.indent(text))
         else:
-            return '%s: (empty)' % name
+            return '%s: (empty)' % (name,)
 
 class Database(MorkAst):
     def __init__(self, items):
@@ -78,7 +82,7 @@ class Dict(MorkAst):
     def __str__(self):
         members = '%s\n%s' % (self.indent_list('meta', self.meta),
             self.indent_list('aliases', self.aliases))
-        return 'Dict:\n%s' % self.indent(members)
+        return 'Dict:\n%s' % (self.indent(members),)
 
 class MetaDict(MorkAst):
     def __init__(self, cells=None):
@@ -88,7 +92,7 @@ class MetaDict(MorkAst):
         self.cells = cells
 
     def __repr__(self):
-        return 'MetaDict(%r)' % self.cells
+        return 'MetaDict(%r)' % (self.cells,)
 
     def __str__(self):
         return self.indent_list('MetaDict', self.cells)
@@ -120,10 +124,10 @@ class MetaRow(Row):
         Row.__init__(self, None, cells)
 
     def __repr__(self):
-        return 'MetaRow(%r)' % self.cells
+        return 'MetaRow(%r)' % (self.cells,)
 
     def __str__(self):
-        return 'MetaRow:\n%s' % self.indent_list('cells', self.cells)
+        return 'MetaRow:\n%s' % (self.indent_list('cells', self.cells),)
 
 class RowUpdate(MorkAst):
     def __init__(self, obj, method=''):
@@ -135,7 +139,7 @@ class RowUpdate(MorkAst):
 
     def __str__(self):
         members = 'method: %r\nobj: %s' % (self.method, self.obj)
-        return 'RowUpdate:\n%s' % self.indent(members)
+        return 'RowUpdate:\n%s' % (self.indent(members),)
 
 class RowMove(MorkAst):
     def __init__(self, rowid, position):
@@ -147,7 +151,7 @@ class RowMove(MorkAst):
 
     def __str__(self):
         members = 'rowid: %r\nposition: %#x' % (self.rowid, self.position)
-        return 'RowMove:\n%s' % self.indent(members)
+        return 'RowMove:\n%s' % (self.indent(members),)
 
 class Table(MorkAst):
     def __init__(self, tableid, rows=None, meta=None, trunc=False):
@@ -187,7 +191,7 @@ class MetaTable(MorkAst):
     def __str__(self):
         members = '%s\n%s' % (self.indent_list('cells', self.cells),
                               self.indent_list('rows', self.rows))
-        return 'MetaTable:\n%s' % self.indent(members)
+        return 'MetaTable:\n%s' % (self.indent(members),)
 
 class Alias(MorkAst):
     def __init__(self, key, value):
@@ -227,7 +231,7 @@ class ObjectId(MorkAst):
 
     def __repr__(self):
         if self.scope is None:
-            return 'ObjectId(%r)' % self.objectid
+            return 'ObjectId(%r)' % (self.objectid,)
         else:
             return 'ObjectId(%r, %r)' % (self.objectid, self.scope)
 
@@ -242,7 +246,7 @@ class ObjectRef(MorkAst):
         self.obj = obj
 
     def __repr__(self):
-        return 'ObjectRef(%r)' % self.obj
+        return 'ObjectRef(%r)' % (self.obj,)
 
     def __str__(self):
-        return '^%s' % self.obj
+        return '^%s' % (self.obj,)

@@ -19,6 +19,10 @@ for building them from Abstract Syntax Trees.
 # You should have received a copy of the GNU General Public License
 # along with mork-converter.  If not, see <http://www.gnu.org/licenses/>.
 
+# flake8: noqa
+# pylint: disable=missing-docstring,invalid-name,protected-access
+# pylint: disable=unused-variable,bad-continuation,bad-whitespace
+
 import warnings
 import re
 
@@ -30,8 +34,8 @@ class MorkDict(dict):
 
         # I'm not really sure this initialization is right. It seems
         # unnecessary in test files, but should also be harmless.
-        for i in xrange(0x80):
-            col = '%X' % i
+        for i in range(0x80):
+            col = '%X' % (i,)
             value = chr(i)
             self[col] = value
 
@@ -93,7 +97,7 @@ class MorkRowList(list): # [ ('namespace', 'id', MorkRow) ]
         pos = self.index(namespace, rowid)
 
         if new_pos >= len(self):
-            warning.warn('during row move, new_pos is outside of table range')
+            warnings.warn('during row move, new_pos is outside of table range')
             new_pos = len(self) - 1
 
         item = self[pos]
@@ -122,7 +126,7 @@ class MorkTable(MorkRowList):
         assert isinstance(ast, morkast.Table)
 
         # Get id and namespace
-        (oid, namespace) = db._dissectId(ast.tableid)
+        oid, namespace = db._dissectId(ast.tableid)
         assert namespace is not None, 'no namespace found for table'
 
         # Start with an empty table if trunc or if there's no table currently
@@ -178,7 +182,7 @@ class MorkMetaTable(object):
         db._readRows(ast.rows, table_namespace, self.rows)
 
         for cell in ast.cells:
-            (column, value) = db._inflateCell(cell)
+            column, value = db._inflateCell(cell)
             self.cells[column] = value
 
         db.meta_tables[table_namespace, tableid] = self
@@ -197,7 +201,7 @@ class MorkRow(dict):
         assert isinstance(ast, morkast.Row)
 
         # Get id and namespace
-        (oid, namespace) = db._dissectId(ast.rowid, default_namespace)
+        oid, namespace = db._dissectId(ast.rowid, default_namespace)
         assert namespace is not None, 'no namespace found for row'
 
         # Start with an empty row if trunc or if there's no row currently
@@ -208,7 +212,7 @@ class MorkRow(dict):
             self.clear()
 
         for cell in ast.cells:
-            (column, value) = db._inflateCell(cell)
+            column, value = db._inflateCell(cell)
             if cell.cut:
                 self.pop(column, None)
             else:
@@ -246,7 +250,7 @@ class MorkDatabase(object):
     def _dictDeref(self, objref, default_namespace='c'):
         assert isinstance(objref, morkast.ObjectRef)
 
-        (oid, namespace) = self._dissectId(objref.obj, default_namespace)
+        oid, namespace = self._dissectId(objref.obj, default_namespace)
 
         return self.dicts[namespace][oid]
 
@@ -298,7 +302,7 @@ class MorkDatabase(object):
             # Each row could be morkast.Row, morkast.RowUpdate,
             # morkast.RowMove, or morkast.ObjectId
             if isinstance(row, morkast.RowMove):
-                (rowid, row_namespace) = self._dissectId(row.rowid,
+                rowid, row_namespace = self._dissectId(row.rowid,
                                                         table_namespace)
 
                 row_list.move_row(row_namespace, rowid, row.position)
@@ -315,9 +319,9 @@ class MorkDatabase(object):
                 row_id_ast = row.rowid
                 MorkRow.from_ast(row, self, table_namespace)
             else:
-                raise StandardError('Bad row type: %s' % type(row))
+                raise Exception('Bad row type: %s' % (type(row)),)
 
-            (rowid, row_namespace) = self._dissectId(row_id_ast, table_namespace)
+            rowid, row_namespace = self._dissectId(row_id_ast, table_namespace)
 
             if update == '+':
                 row_list.append(row_namespace, rowid,

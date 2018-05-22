@@ -14,6 +14,12 @@
 # You should have received a copy of the GNU General Public License
 # along with mork-converter.  If not, see <http://www.gnu.org/licenses/>.
 
+# flake8: noqa
+# pylint: disable=deprecated-module,too-many-instance-attributes,invalid-name
+# pylint: disable=missing-docstring,unused-variable,no-else-return,no-self-use
+# pylint: disable=bad-continuation,inconsistent-return-statements
+# pylint: disable=bad-whitespace
+
 import warnings
 import codecs
 import re
@@ -148,11 +154,11 @@ def _decode_known_utf16(field):
     elif byte_order in ('LE', 'llll'):
         codec = 'utf-16-le'
     else:
-        assert False, 'Invalid byte order: %r' % byte_order
+        assert False, 'Invalid byte order: %r' % (byte_order,)
 
     return field.value.decode(codec)
 
-_control_matcher = re.compile(ur'[\x80-\x9f]')
+_control_matcher = re.compile(r'[\x80-\x9f]')
 def _decode_iso_8859(field):
     '''
     Decoder that uses one of the ISO-8859 encodings, and fails if the result
@@ -165,7 +171,7 @@ def _decode_iso_8859(field):
         return None
 
     try:
-        return field.value.decode('iso-8859-%s' % field.opts.iso_8859)
+        return field.value.decode('iso-8859-%s' % (field.opts.iso_8859,))
     except UnicodeError:
         return None
 
@@ -196,7 +202,7 @@ class DecodeCharacters(Filter):
         decode_group.add_option('-i', '--iso-8859', metavar='N',
             choices=iso_parts + [''],
             help='select the ISO-8859 character set for fields in the input '
-                 'file (default: 1, available: %s)' % ', '.join(iso_parts))
+                 'file (default: 1, available: %s)' % (', '.join(iso_parts),))
         decode_group.add_option('-f', '--fallback-charset', metavar='ENCODING',
             help='select the character set used for field decoding when all '
                  'others fail (default: windows-1252)')
@@ -217,7 +223,7 @@ class DecodeCharacters(Filter):
         result = []
         for part in range(1, 17):
             try:
-                codecs.lookup('iso-8859-%d' % part)
+                codecs.lookup('iso-8859-%d' % (part,))
             except LookupError:
                 continue
 
@@ -228,7 +234,7 @@ class DecodeCharacters(Filter):
     def _filter_table(self, field, table):
         for (row_namespace, row_id, row) in table:
             for (column, value) in row.items():
-                if isinstance(value, unicode):
+                if isinstance(value, str):
                     continue
 
                 field.set_value(row_namespace, column, value)
@@ -248,7 +254,7 @@ class DecodeCharacters(Filter):
             if decoded_val is not None:
                 return decoded_val
 
-        assert False, 'failed to decode %r' % value
+        assert False, 'failed to decode %r' % (field,)
 
 new_decoding_filter = DecodeCharacters(2010)
 
@@ -256,7 +262,7 @@ new_decoding_filter = DecodeCharacters(2010)
 # Byte-Order Marks.
 class EncodingStream(object):
     def __init__(self, output_encoding, stream):
-        (encoder, bom) = self._fix_encoding(output_encoding)
+        encoder, bom = self._fix_encoding(output_encoding)
 
         self.encoder = codecs.getencoder(encoder)
         self.stream = stream
@@ -269,7 +275,7 @@ class EncodingStream(object):
         return cls(output_encoding, f)
 
     def write(self, s):
-        (s, consumed) = self.encoder(s)
+        s, consumed = self.encoder(s)
         self.stream.write(s)
 
     def __getattr__(self, name):

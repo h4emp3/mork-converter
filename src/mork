@@ -15,19 +15,23 @@
 # You should have received a copy of the GNU General Public License
 # along with mork-converter.  If not, see <http://www.gnu.org/licenses/>.
 
+# flake8: noqa
+# pylint: disable=missing-docstring,invalid-name,wrong-import-position
+# pylint: disable=too-many-arguments,unused-argument,bad-continuation
+
 # Do python version checking up front.
 import sys
 
 min_python_version = (2, 4)
 if sys.version_info < min_python_version:
     str_version = '.'.join([str(part) for part in min_python_version])
-    print >> sys.stderr, ('This script requires python %s or higher!' %
-                          str_version)
+    sys.stderr.write('This script requires python %s or higher!\n' %
+                     (str_version,))
     sys.exit(1)
 
 # Done with version checking. Get on with real work.
 
-import optparse
+import optparse  # pylint: disable=deprecated-module
 import re
 import warnings
 import os
@@ -59,7 +63,7 @@ def print_tokens(f):
 def print_syntax_tree(f):
     import MorkDB.morkyacc as morkyacc
     tree = morkyacc.parse_file(f)
-    print tree
+    print(tree)
 
 _leading_space_matcher = re.compile(r'^\s+', re.MULTILINE)
 def _format_docstring(docstring, indent):
@@ -73,10 +77,10 @@ def print_filters():
         else:
             name = filt.__class__.__name__
 
-        print '%5d - %s' % (order, name)
+        print('%5d - %s' % (order, name))
 
         if filt.__doc__:
-            print _format_docstring(filt.__doc__, ' '*10)
+            print(_format_docstring(filt.__doc__, ' '*10))
 
 def process_database(f, filters, opts):
     import MorkDB.morkdb as morkdb
@@ -90,7 +94,7 @@ def process_database(f, filters, opts):
 
 def parse_arguments(args, filters):
     parser = optparse.OptionParser(usage='%prog [options] [<mork-file>]',
-        version='Mork converter by Kevin Goodsell, version %s' % version)
+        version='Mork converter by Kevin Goodsell, version %s' % (version,))
 
     parser.add_option('-o', '--outname', help='output file or dir name')
     parser.add_option('-e', '--out-encoding', metavar='ENCODING',
@@ -111,7 +115,7 @@ def parse_arguments(args, filters):
 
     parser.set_defaults(out_encoding='utf-8')
 
-    (options, arguments) = parser.parse_args(args)
+    options, arguments = parser.parse_args(args)
 
     if len(arguments) > 1:
         parser.error('too many file arguments')
@@ -123,9 +127,9 @@ def main(args=None):
         args = sys.argv[1:]
 
     filters = list_filters()
-    (opts, arguments) = parse_arguments(args, filters)
+    opts, arguments = parse_arguments(args, filters)
 
-    if len(arguments) == 0:
+    if not arguments:
         f = sys.stdin
     else:
         f = arguments[0]
@@ -147,7 +151,7 @@ if __name__ == '__main__':
         sys.exit(main())
     except KeyboardInterrupt:
         sys.exit(1)
-    except IOError, e:
+    except IOError as e:
         import errno
         if e.errno != errno.EPIPE:
             raise
