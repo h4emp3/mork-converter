@@ -25,7 +25,7 @@ import codecs
 import re
 import optparse
 
-from filterbase import Filter
+from .filterbase import Filter
 
 class FieldInfo(object):
     '''
@@ -267,11 +267,11 @@ class EncodingStream(object):
         self.encoder = codecs.getencoder(encoder)
         self.stream = stream
 
-        self.stream.write(bom)
+        self.stream.write(self.encoder(bom)[0])
 
     @classmethod
     def open(cls, output_encoding, filename):
-        f = open(filename, 'w')
+        f = open(filename, 'wb')
         return cls(output_encoding, f)
 
     def write(self, s):

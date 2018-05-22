@@ -24,8 +24,8 @@ import re
 import os
 import sys
 
-from filterbase import Filter
-from encoding import EncodingStream
+from .filterbase import Filter
+from .encoding import EncodingStream
 
 class CsvOutput(Filter):
     '''
@@ -153,7 +153,7 @@ class _TableWriter(object):
         Simple helper function to use EncodingStream.
         '''
         if filename == '-':
-            return EncodingStream(self.opts.out_encoding, sys.stdout)
+            return EncodingStream(self.opts.out_encoding, sys.stdout.buffer)
         else:
             return EncodingStream.open(self.opts.out_encoding, filename)
 

@@ -22,7 +22,7 @@ import re
 import warnings
 import quopri
 
-from filterbase import Filter
+from .filterbase import Filter
 
 class DecodeMimeHeaders(Filter):
     '''Filter to decode RFC 2047 MIME headers.'''

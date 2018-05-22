@@ -26,7 +26,7 @@ for building them from Abstract Syntax Trees.
 import warnings
 import re
 
-import MorkDB.morkast as morkast
+from . import morkast
 
 class MorkDict(dict):
     def __init__(self):

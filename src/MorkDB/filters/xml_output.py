@@ -28,8 +28,8 @@ import re
 import warnings
 import sys
 
-from filterbase import Filter
-from encoding import EncodingStream
+from .filterbase import Filter
+from .encoding import EncodingStream
 
 # Filter is available as a base class for filter classes, but it's not
 # necessary. Filters can be classes or class instances. In this case it
@@ -71,7 +71,7 @@ class XmlOutput(Filter):
             return
 
         if opts.outname is None or opts.outname == '-':
-            f = EncodingStream(opts.out_encoding, sys.stdout)
+            f = EncodingStream(opts.out_encoding, sys.stdout.buffer)
         else:
             f = EncodingStream.open(opts.out_encoding, opts.outname)
 

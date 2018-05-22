@@ -22,8 +22,8 @@ import optparse  # pylint: disable=deprecated-module
 import warnings
 import sys
 
-from filterbase import Filter
-import converters
+from .filterbase import Filter
+from . import converters
 
 _converters = {
     # General converters first.

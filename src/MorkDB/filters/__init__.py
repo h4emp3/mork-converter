@@ -41,8 +41,8 @@ def _find_modules():
         # Library Reference.
         try:
             __import__(module_name)
-        except ImportError:
-            pass
+        except ImportError as exc:
+            print('failed to import', module_name, exc)
         else:
             yield sys.modules[module_name]
 

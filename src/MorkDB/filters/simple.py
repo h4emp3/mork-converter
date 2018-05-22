@@ -20,7 +20,7 @@
 # pylint: disable=bad-continuation,unused-variable,invalid-name
 # pylint: disable=missing-docstring
 
-from filterbase import Filter
+from .filterbase import Filter
 
 class StripEmptyCells(Filter):
     '''

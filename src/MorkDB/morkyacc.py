@@ -359,6 +359,6 @@ def _get_parse_tree(filename):
         return None
 
     if tree_st.st_mtime > mork_st.st_mtime:
-        return pickle.load(open(tree_name))
+        return pickle.load(open(tree_name, 'rb'))
 
     return None
