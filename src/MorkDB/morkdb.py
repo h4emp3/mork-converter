@@ -276,11 +276,18 @@ class MorkDatabase(object):
     def _translateEscape(self, match):
         text = match.group()
         if text.startswith('$'):
-            return chr(int(text[1:], 16))
+            if len(text) == 3:
+                return chr(int(text[1:], 16))
+            result = []
+            while text:
+                text, byte = text[3:], text[:3]
+                result.append(int(byte[1:], 16))
+            return bytes(result).decode('utf-8')
 
         return self._unescapeMap[text]
 
-    _escape = re.compile(r'\$[0-9a-fA-F]{2}|\\\r\n|\\.', re.DOTALL)
+    _escape = re.compile(r'\$C3\$[0-9a-fA-F]{2}|\$[0-9a-fA-F]{2}|\\\r\n|\\.',
+                         re.DOTALL)
     def _unescape(self, value):
         return self._escape.sub(self._translateEscape, value)
 
